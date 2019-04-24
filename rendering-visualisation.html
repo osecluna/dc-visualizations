@@ -1,0 +1,43 @@
+ <html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://unpkg.com/dc-delivery-sdk-js/dist/dynamicContent.browser.umd.min.js"></script>
+    </head>
+    <body>
+      <div id="contentRender"></div>
+       
+      <script>        
+        function getQueryVar(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (decodeURIComponent(pair[0]) == variable) {
+                return decodeURIComponent(pair[1]);
+            }
+        }
+        return false;
+      }
+
+      $(document).ready(() => {
+        const vseDomain = getQueryVar('api');
+        const slotId = getQueryVar('content');
+        const template = getQueryVar('template');
+        const $div = $('.home-viewall');
+        const client = new ampDynamicContent.ContentClient({
+          account: 'ampproduct',
+        });
+        const $div = $('#contentRender');
+
+        client.renderContentItem(slotId, template)
+          .then((response) => {
+            const html = $.parseHTML(response.body);
+            $div.append(html);
+          })
+          .catch((error) => {
+            console.log('unable to find content', error);
+          });
+      });
+      </script>
+    </body>
+</html>
